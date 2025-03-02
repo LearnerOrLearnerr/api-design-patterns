@@ -1,33 +1,57 @@
 openapi: '3.0.3'
 info:
-  title: Green Grocerer
-  version: '1.0'
+  title: Products inventory API for Green Grocers
+  version: '1.0.0'
+tags:
+  - name: admins
+    description: Administrative actions for suppliers data
+  - name: developers
+    description: Development API for suppliers and products data
 servers:
   - url: https://greengrocer/content/v1
 paths:
-
-  /suppliers:
+  /content/v1/health-check:
     get:
       tags:
-        - admin
+        - developers
+      summary: Health check ping
+      operationId: healthCheck
+      description: Perform health check of product inventory services availability
+      responses:
+        '200':
+          description: All good!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckStatus'
+        '400':
+          description: System unhealthy; find a solution to avoid disrupting others!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckStatus'
+
+  /content/v1/suppliers:
+    get:
+      tags:
+        - admins
       summary: List of all available suppliers
       operationId: suppliers
       description: |
         Fetch all the suppliers of greengrocer (admin only)
       responses:
-        200:
+        '200':
           description: Return the list of all suppliers
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SupplierSummary'
 
-
-  /suppliers/{supplierId}/products:
+  /content/v1/suppliers/{supplierId}/products:
     get:
       tags:
         - developers
-      summary: List of all available products for a supplier
+      summary: List of all available products for the given supplier
       operationId: suppliersProducts
       description: |
         Fetch all products supplied by a specific suppliers (developers only)
@@ -39,7 +63,7 @@ paths:
             type: string
             example: "123"
       responses:
-        200:
+        '200':
           description: List of products by the supplier
           content:
             application/json:
@@ -47,7 +71,7 @@ paths:
                 $ref: '#/components/schemas/ProductsSummary'
 
 
-  /suppliers/{supplierId}/products/{productId}:
+  /content/v1/suppliers/{supplierId}/products/{productId}:
     get:
       tags:
         - developers
@@ -67,10 +91,10 @@ paths:
             type: string
           required: true
       responses:
-        200:
+        '200':
           description: Details of the product
 
-  /products:
+  /content/v1/products:
     get:
       tags:
         - developers
@@ -78,41 +102,41 @@ paths:
       operationId: products
       description: Gets a list of all products
       responses:
-        200:
+        '200':
           description: List of all products
 
 components:
   schemas:
+    HealthCheckStatus:
+      type: string
+
     SupplierSummary:
-      type: "object"
-      required:
-        - "id"
-        - "name"
-      properties:
-        id:
-          type: "string"
-          example: "123"
-        name:
-          type: "string"
-          example: "World Record Breaker"
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductsSummary'
-          example:
-            - productId: 345
-              name: "Kulkuli"
-              sellUnitPrice: 3.0
-              sellUnitCurrency: "GBP"
-              barCode: "99999"
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - name
+        properties:
+          id:
+            type: string
+            example: "UK-123"
+          name:
+            type: string
+            example: "World Record Breaker"
+          products:
+            type: array
+            items:
+              $ref: '#/components/schemas/ProductsSummary'
+
     ProductsSummary:
-      type: "object"
+      type: object
       required:
-        - "productId"
-        - "name"
-        - "sellUnitPrice"
-        - "sellUnitCurrency"
-        - "barCode"
+        - productId
+        - name
+        - sellUnitPrice
+        - sellUnitCurrency
+        - barCode
       properties:
         productId:
           type: string
@@ -152,3 +176,9 @@ components:
             - Coco
             - Sugar
             - Milk
+      example:
+        - productId: 345
+          name: "Kulkuli"
+          sellUnitPrice: 3.0
+          sellUnitCurrency: "GBP"
+          barCode: "99999"

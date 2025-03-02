@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * ProductsSummary
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-03-02T19:29:17.494839200Z[Europe/London]", comments = "Generator version: 7.12.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-03-02T22:12:19.538108500Z[Europe/London]", comments = "Generator version: 7.12.0")
 public class ProductsSummary {
 
   private String productId;

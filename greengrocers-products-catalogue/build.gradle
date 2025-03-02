@@ -24,10 +24,10 @@ openApiGenerate {
 		library: 'spring-boot',
 		useJakartaEe: 'true'
 	]
-	inputSpec = "$rootDir/src/main/resources/yaml/suppliers-products.yaml"
+	inputSpec = "$rootDir/src/main/resources/schemas/products-read-api-spec.yaml"
 
 	// Optional configuration fields
-	outputDir = "$rootDir/build/generated/openapi-suppliers-products"
+	outputDir = "$rootDir/build/generated/products-read-api"
 
 	// package names
 	invokerPackage = 'com.greengrocer.gen.client'
@@ -59,7 +59,7 @@ tasks.named('test') {
 Copy generated modelPackage from build/* to src/main/java/*
 */
 tasks.register ('copyGeneratedCode', Copy) {
-	from ("$rootDir/build/generated/openapi-suppliers-products/src/main/java") {
+	from ("$rootDir/build/generated/products-read-api/src/main/java") {
 		include '**/catalogue/'
 		include '**/entity/'
 	}
