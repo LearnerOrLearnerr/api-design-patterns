@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.12.0'
 }
 
 group = 'com.greengrocer.products.catalogue'
@@ -17,13 +18,52 @@ repositories {
 	mavenCentral()
 }
 
+openApiGenerate {
+	generatorName='spring'
+	configOptions = [
+		library: 'spring-boot',
+		useJakartaEe: 'true'
+	]
+	inputSpec = "$rootDir/src/main/resources/yaml/suppliers-products.yaml"
+
+	// Optional configuration fields
+	outputDir = "$rootDir/build/generated/openapi-suppliers-products"
+
+	// package names
+	invokerPackage = 'com.greengrocer.gen.client'
+	apiPackage = 'com.greengrocer.gen.catalogue'
+	modelPackage = 'com.greengrocer.gen.entity'
+}
+
 dependencies {
+	// spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// swagger for @Tag tag annotation used by generated code
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.28'
+
+	// openAPI generator
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+/*
+Copy generated modelPackage from build/* to src/main/java/*
+*/
+tasks.register ('copyGeneratedCode', Copy) {
+	from ("$rootDir/build/generated/openapi-suppliers-products/src/main/java") {
+		include '**/catalogue/'
+		include '**/entity/'
+	}
+
+	into ("$rootDir/src/main/java")
+	includeEmptyDirs = false
 }

@@ -1,0 +1,154 @@
+openapi: '3.0.3'
+info:
+  title: Green Grocerer
+  version: '1.0'
+servers:
+  - url: https://greengrocer/content/v1
+paths:
+
+  /suppliers:
+    get:
+      tags:
+        - admin
+      summary: List of all available suppliers
+      operationId: suppliers
+      description: |
+        Fetch all the suppliers of greengrocer (admin only)
+      responses:
+        200:
+          description: Return the list of all suppliers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplierSummary'
+
+
+  /suppliers/{supplierId}/products:
+    get:
+      tags:
+        - developers
+      summary: List of all available products for a supplier
+      operationId: suppliersProducts
+      description: |
+        Fetch all products supplied by a specific suppliers (developers only)
+      parameters:
+        - in: path
+          name: supplierId
+          required: true
+          schema:
+            type: string
+            example: "123"
+      responses:
+        200:
+          description: List of products by the supplier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsSummary'
+
+
+  /suppliers/{supplierId}/products/{productId}:
+    get:
+      tags:
+        - developers
+      summary: Details of a product
+      operationId: product
+      description: Gets details a product
+      parameters:
+        - in: path
+          name: supplierId
+          schema:
+            type: string
+            example: "123"
+          required: true
+        - in: path
+          name: productId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Details of the product
+
+  /products:
+    get:
+      tags:
+        - developers
+      summary: All product
+      operationId: products
+      description: Gets a list of all products
+      responses:
+        200:
+          description: List of all products
+
+components:
+  schemas:
+    SupplierSummary:
+      type: "object"
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: "string"
+          example: "123"
+        name:
+          type: "string"
+          example: "World Record Breaker"
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductsSummary'
+          example:
+            - productId: 345
+              name: "Kulkuli"
+              sellUnitPrice: 3.0
+              sellUnitCurrency: "GBP"
+              barCode: "99999"
+    ProductsSummary:
+      type: "object"
+      required:
+        - "productId"
+        - "name"
+        - "sellUnitPrice"
+        - "sellUnitCurrency"
+        - "barCode"
+      properties:
+        productId:
+          type: string
+          example: "345"
+        name:
+          type: string
+          example: "Kulkuli"
+        sellUnit:
+          type: string
+          example: "piece"
+        sellUnitPrice:
+          type: number
+          format: double
+          example: 3.0
+        sellUnitCurrency:
+          type: string
+          example: "GBP"
+        weight:
+          type: integer
+          example: "250"
+        weightUnit:
+          type: string
+          example: "ml"
+        imageUrl:
+          type: string
+          example: "https://greengrocers/images/4466"
+        catalogIdsReference:
+          type: string
+        barCode:
+          type: string
+          example: "99990"
+        ingredients:
+          type: array
+          items:
+            type: string
+          example:
+            - Coco
+            - Sugar
+            - Milk
